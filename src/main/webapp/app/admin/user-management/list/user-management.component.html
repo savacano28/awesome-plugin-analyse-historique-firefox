@@ -1,0 +1,101 @@
+<div>
+  <h2>
+    <span data-cy="userManagementPageHeading" id="user-management-page-heading" jhiTranslate="userManagement.home.title">Users</span>
+
+    <div class="d-flex justify-content-end">
+      <button (click)="loadAll()" [disabled]="isLoading" class="btn btn-info mr-2">
+        <fa-icon [spin]="isLoading" icon="sync"></fa-icon>
+        <span jhiTranslate="userManagement.home.refreshListLabel">Refresh List</span>
+      </button>
+      <button [routerLink]="['./new']" class="btn btn-primary jh-create-entity">
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="userManagement.home.createLabel">Create a new User</span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  <div *ngIf="users" class="table-responsive">
+    <table aria-describedby="user-management-page-heading" class="table table-striped">
+      <thead>
+      <tr>
+        <th scope="col">
+          <span jhiTranslate="global.field.id">ID</span>
+        </th>
+        <th scope="col">
+          <span jhiTranslate="userManagement.login">Login</span>
+        </th>
+        <th scope="col">
+          <span jhiTranslate="userManagement.email">Email</span>
+        </th>
+        <th scope="col"></th>
+        <th scope="col">
+          <span jhiTranslate="userManagement.langKey">Lang Key</span>
+        </th>
+        <th scope="col"><span jhiTranslate="userManagement.profiles">Profiles</span></th>
+        <th scope="col"></th>
+      </tr>
+      </thead>
+      <tbody *ngIf="users">
+      <tr *ngFor="let user of users; trackBy: trackIdentity">
+        <td>
+          <a [routerLink]="['./', user.login, 'view']">{{ user.id }}</a>
+        </td>
+        <td>{{ user.login }}</td>
+        <td>{{ user.email }}</td>
+        <td>
+          <button
+            (click)="setActive(user, true)"
+            *ngIf="!user.activated"
+            class="btn btn-danger btn-sm"
+            jhiTranslate="userManagement.deactivated"
+          >
+            Deactivated
+          </button>
+          <button
+            (click)="setActive(user, false)"
+            *ngIf="user.activated"
+            [disabled]="!currentAccount || currentAccount.login === user.login"
+            class="btn btn-success btn-sm"
+            jhiTranslate="userManagement.activated"
+          >
+            Activated
+          </button>
+        </td>
+        <td>{{ user.langKey }}</td>
+        <td>
+          <div *ngFor="let authority of user.authorities">
+            <span class="badge badge-info">{{ authority }}</span>
+          </div>
+        </td>
+        <td class="text-right">
+          <div class="btn-group">
+            <button [routerLink]="['./', user.login, 'view']" class="btn btn-info btn-sm" type="submit">
+              <fa-icon icon="eye"></fa-icon>
+              <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+            </button>
+
+            <button [routerLink]="['./', user.login, 'edit']" class="btn btn-primary btn-sm" queryParamsHandling="merge" type="submit">
+              <fa-icon icon="pencil-alt"></fa-icon>
+              <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+            </button>
+
+            <button
+              (click)="deleteUser(user)"
+              [disabled]="!currentAccount || currentAccount.login === user.login"
+              class="btn btn-danger btn-sm"
+              type="button"
+            >
+              <fa-icon icon="times"></fa-icon>
+              <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+            </button>
+          </div>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

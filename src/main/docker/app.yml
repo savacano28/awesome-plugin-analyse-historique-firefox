@@ -1,0 +1,62 @@
+# This configuration is intended for development purpose, it's **your** responsibility to harden it for production
+version: '3.8'
+services:
+  firy-app:
+    image: firy
+    environment:
+      - _JAVA_OPTIONS=-Xmx512m -Xms256m
+      - SPRING_PROFILES_ACTIVE=prod,api-docs
+      - MANAGEMENT_METRICS_EXPORT_PROMETHEUS_ENABLED=true
+      - SPRING_DATA_CASSANDRA_CONTACTPOINTS=firy-cassandra
+      - JHIPSTER_SLEEP=30 # gives time for other services to boot before the application
+      - KAFKA_BOOTSTRAPSERVERS=kafka:9092
+    # If you want to expose these ports outside your dev PC,
+    # remove the "127.0.0.1:" prefix
+    ports:
+      - 127.0.0.1:8080:8080
+  firy-cassandra:
+    image: cassandra:3.11.10
+    # volumes:
+    #   - ~/volumes/jhipster/firy/cassandra/:/var/lib/cassandra/data
+    # If you want to expose these ports outside your dev PC,
+    # remove the "127.0.0.1:" prefix
+    ports:
+      - 127.0.0.1:7000:7000
+      - 127.0.0.1:7001:7001
+      - 127.0.0.1:7199:7199
+      - 127.0.0.1:9042:9042
+      - 127.0.0.1:9160:9160
+  firy-cassandra-node:
+    image: cassandra:3.11.10
+    environment:
+      - CASSANDRA_SEEDS=firy-cassandra
+  firy-cassandra-migration:
+    environment:
+      - CASSANDRA_CONTACT_POINT=firy-cassandra
+      - USER=docker-cassandra-migration
+      # - DEBUG_LOG=1 # uncomment to show debug logs during the migration process
+      - CREATE_KEYSPACE_SCRIPT=create-keyspace-prod.cql
+    build:
+      context: .
+      dockerfile: cassandra/Cassandra-Migration.Dockerfile
+    volumes:
+      - ../resources/config/cql:/cql:ro
+  kafka:
+    image: confluentinc/cp-kafka:5.5.4
+    # If you want to expose these ports outside your dev PC,
+    # remove the "127.0.0.1:" prefix
+    ports:
+      - 127.0.0.1:9092:9092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+  zookeeper:
+    image: confluentinc/cp-zookeeper:5.5.4
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
