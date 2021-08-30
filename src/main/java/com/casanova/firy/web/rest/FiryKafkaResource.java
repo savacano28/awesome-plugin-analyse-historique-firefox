@@ -25,7 +25,8 @@ public class FiryKafkaResource {
     }
 
     @GetMapping("/consume")
-    public ResponseEntity<Void> consume(@RequestParam("topic") List<String> topics, @RequestParam Map<String, String> consumerParams) {
+    public ResponseEntity<Void> consume(@RequestParam("topic") List<String> topics, @RequestParam Map<String, String> consumerParams) throws
+                                                                                                                                      InterruptedException {
         log.debug("REST request to consume records from Kafka topics {}", topics);
         firyKafkaService.consume(topics, consumerParams);
         return new ResponseEntity<>(HttpStatus.OK);
