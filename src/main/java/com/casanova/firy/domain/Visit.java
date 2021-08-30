@@ -1,7 +1,5 @@
 package com.casanova.firy.domain;
 
-import java.time.LocalDate;
-
 public class Visit {
 
     private Integer id;
@@ -10,9 +8,11 @@ public class Visit {
 
     private Integer place_id;
 
-    private LocalDate visit_date;
+    private Integer visit_date;
 
     private Integer visit_type;
+
+    private Integer session;
 
     public Integer getId() {
         return id;
@@ -38,11 +38,11 @@ public class Visit {
         this.place_id = place_id;
     }
 
-    public LocalDate getVisit_date() {
+    public Integer getVisit_date() {
         return visit_date;
     }
 
-    public void setVisit_date(LocalDate visit_date) {
+    public void setVisit_date(Integer visit_date) {
         this.visit_date = visit_date;
     }
 
@@ -52,5 +52,13 @@ public class Visit {
 
     public void setVisit_type(Integer visit_type) {
         this.visit_type = visit_type;
+    }
+
+    public Integer getSession() {
+        return session;
+    }
+
+    public void setSession(Integer session) {
+        this.session = session;
     }
 }

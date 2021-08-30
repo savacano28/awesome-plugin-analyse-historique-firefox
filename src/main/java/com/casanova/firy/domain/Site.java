@@ -1,7 +1,5 @@
 package com.casanova.firy.domain;
 
-import java.time.LocalDate;
-
 public class Site {
 
     private Integer id;
@@ -14,11 +12,25 @@ public class Site {
 
     private Integer visit_count;
 
+    private Integer hidden;
+
+    private Integer typed;
+
     private Integer frecency;
 
     private String description;
 
-    private LocalDate last_visit_date;
+    private String guid;
+
+    private String preview_image_url;
+
+    private Integer last_visit_date;
+
+    private Integer url_hash;
+
+    private Integer origin_id;
+
+    private Integer foreign_count;
 
     public Integer getId() {
         return id;
@@ -76,11 +88,67 @@ public class Site {
         this.description = description;
     }
 
-    public LocalDate getLast_visit_date() {
+    public Integer getLast_visit_date() {
         return last_visit_date;
     }
 
-    public void setLast_visit_date(LocalDate last_visit_date) {
+    public void setLast_visit_date(Integer last_visit_date) {
         this.last_visit_date = last_visit_date;
+    }
+
+    public Integer getHidden() {
+        return hidden;
+    }
+
+    public void setHidden(Integer hidden) {
+        this.hidden = hidden;
+    }
+
+    public Integer getTyped() {
+        return typed;
+    }
+
+    public void setTyped(Integer typed) {
+        this.typed = typed;
+    }
+
+    public String getGuid() {
+        return guid;
+    }
+
+    public void setGuid(String guid) {
+        this.guid = guid;
+    }
+
+    public String getPreview_image_url() {
+        return preview_image_url;
+    }
+
+    public void setPreview_image_url(String preview_image_url) {
+        this.preview_image_url = preview_image_url;
+    }
+
+    public Integer getUrl_hash() {
+        return url_hash;
+    }
+
+    public void setUrl_hash(Integer url_hash) {
+        this.url_hash = url_hash;
+    }
+
+    public Integer getOrigin_id() {
+        return origin_id;
+    }
+
+    public void setOrigin_id(Integer origin_id) {
+        this.origin_id = origin_id;
+    }
+
+    public Integer getForeign_count() {
+        return foreign_count;
+    }
+
+    public void setForeign_count(Integer foreign_count) {
+        this.foreign_count = foreign_count;
     }
 }
