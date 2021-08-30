@@ -50,6 +50,7 @@ public class FiryKafkaService {
         sparkConf.setAppName("FiryApp");
         sparkConf.setMaster("local[2]");
         sparkConf.set("spark.cassandra.connection.host", "127.0.0.1");
+        sparkConf.set("spark.cassandra.output.consistency.level", "LOCAL_ONE");
 
         Map<String, Object> consumerProps = kafkaProperties.getConsumerProps();
         consumerProps.putAll(consumerParams);

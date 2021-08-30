@@ -1,6 +1,8 @@
 package com.casanova.firy.domain;
 
-public class Site {
+import scala.Serializable;
+
+public class Site implements Serializable {
 
     private Integer id;
 
@@ -150,5 +152,25 @@ public class Site {
 
     public void setForeign_count(Integer foreign_count) {
         this.foreign_count = foreign_count;
+    }
+
+    @Override public String toString() {
+        return "Site{" +
+               "id=" + id +
+               ", url='" + url + '\'' +
+               ", title='" + title + '\'' +
+               ", rev_host='" + rev_host + '\'' +
+               ", visit_count=" + visit_count +
+               ", hidden=" + hidden +
+               ", typed=" + typed +
+               ", frecency=" + frecency +
+               ", description='" + description + '\'' +
+               ", guid='" + guid + '\'' +
+               ", preview_image_url='" + preview_image_url + '\'' +
+               ", last_visit_date=" + last_visit_date +
+               ", url_hash=" + url_hash +
+               ", origin_id=" + origin_id +
+               ", foreign_count=" + foreign_count +
+               '}';
     }
 }

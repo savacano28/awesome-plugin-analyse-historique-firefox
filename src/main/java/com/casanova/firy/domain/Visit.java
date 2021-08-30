@@ -1,6 +1,8 @@
 package com.casanova.firy.domain;
 
-public class Visit {
+import scala.Serializable;
+
+public class Visit implements Serializable {
 
     private Integer id;
 
@@ -60,5 +62,16 @@ public class Visit {
 
     public void setSession(Integer session) {
         this.session = session;
+    }
+
+    @Override public String toString() {
+        return "Visit{" +
+               "id=" + id +
+               ", from_visit=" + from_visit +
+               ", place_id=" + place_id +
+               ", visit_date=" + visit_date +
+               ", visit_type=" + visit_type +
+               ", session=" + session +
+               '}';
     }
 }

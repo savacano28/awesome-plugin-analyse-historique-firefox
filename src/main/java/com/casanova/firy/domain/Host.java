@@ -1,6 +1,8 @@
 package com.casanova.firy.domain;
 
-public class Host {
+import scala.Serializable;
+
+public class Host implements Serializable {
 
     private Integer id;
 
@@ -40,5 +42,14 @@ public class Host {
 
     public void setFrecency(Integer frecency) {
         this.frecency = frecency;
+    }
+
+    @Override public String toString() {
+        return "Host{" +
+               "id=" + id +
+               ", prefix='" + prefix + '\'' +
+               ", host='" + host + '\'' +
+               ", frecency=" + frecency +
+               '}';
     }
 }
