@@ -2,6 +2,9 @@ package com.casanova.firy.domain;
 
 import scala.Serializable;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
+
 public class Visit implements Serializable {
 
     private Integer id;
@@ -10,11 +13,15 @@ public class Visit implements Serializable {
 
     private Integer place_id;
 
-    private Integer visit_date;
+    private Long visit_date;
+
+    private LocalDate visit_date_simple;
 
     private Integer visit_type;
 
     private Integer session;
+
+    private long duration;
 
     public Integer getId() {
         return id;
@@ -40,12 +47,18 @@ public class Visit implements Serializable {
         this.place_id = place_id;
     }
 
-    public Integer getVisit_date() {
+    public Long getVisit_date() {
         return visit_date;
     }
 
-    public void setVisit_date(Integer visit_date) {
-        this.visit_date = visit_date;
+    public void setVisit_date(Long visit_date) {
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        this.visit_date = timestamp.getTime();
+        this.visit_date_simple = timestamp.toLocalDateTime().toLocalDate();
+    }
+
+    public LocalDate getVisit_date_simple() {
+        return visit_date_simple;
     }
 
     public Integer getVisit_type() {
@@ -64,14 +77,24 @@ public class Visit implements Serializable {
         this.session = session;
     }
 
+    public long getDuration() {
+        return duration;
+    }
+
+    public void setDuration(long duration) {
+        this.duration = duration;
+    }
+
     @Override public String toString() {
         return "Visit{" +
                "id=" + id +
                ", from_visit=" + from_visit +
                ", place_id=" + place_id +
                ", visit_date=" + visit_date +
+               ", visit_date_simple=" + visit_date_simple +
                ", visit_type=" + visit_type +
                ", session=" + session +
+               ", duration=" + duration +
                '}';
     }
 }

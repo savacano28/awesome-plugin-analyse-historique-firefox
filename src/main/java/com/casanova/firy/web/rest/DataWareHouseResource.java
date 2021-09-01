@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/firy-datawarehouse")
-public class FiryDataWareHouseResource {
+@RequestMapping("/api/firy-datawarehouse")
+public class DataWareHouseResource {
 
-    private final Logger log = LoggerFactory.getLogger(FiryDataWareHouseResource.class);
+    private final Logger log = LoggerFactory.getLogger(DataWareHouseResource.class);
     private final DataWareHouseService dataWareHouseService;
 
-    public FiryDataWareHouseResource(final DataWareHouseService dataWareHouseService) {
+    public DataWareHouseResource(final DataWareHouseService dataWareHouseService) {
         this.dataWareHouseService = dataWareHouseService;
     }
 
@@ -26,6 +26,15 @@ public class FiryDataWareHouseResource {
     public ResponseEntity<DataGrid> getDataFromTable(@RequestParam String nameTable) {
         log.debug("REST request to get data for table : {}", nameTable);
         return new ResponseEntity<>(dataWareHouseService.getDataFromTable(nameTable), HttpStatus.OK);
+    }
+
+    @GetMapping("/dim-site")
+    public ResponseEntity<Void> getDataFromTable() {
+        log.debug("REST request to stocke data in dim site");
+        dataWareHouseService.processDataToFactVisit();
+        dataWareHouseService.processDataToDimHost();
+        dataWareHouseService.processDataToDimSite();
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }

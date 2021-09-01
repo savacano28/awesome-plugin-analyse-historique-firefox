@@ -2,6 +2,9 @@ package com.casanova.firy.domain;
 
 import scala.Serializable;
 
+import java.sql.Timestamp;
+import java.time.LocalDate;
+
 public class Site implements Serializable {
 
     private Integer id;
@@ -26,7 +29,9 @@ public class Site implements Serializable {
 
     private String preview_image_url;
 
-    private Integer last_visit_date;
+    private long last_visit_date;
+
+    private LocalDate last_visit_date_simple;
 
     private Integer url_hash;
 
@@ -90,12 +95,18 @@ public class Site implements Serializable {
         this.description = description;
     }
 
-    public Integer getLast_visit_date() {
+    public long getLast_visit_date() {
         return last_visit_date;
     }
 
-    public void setLast_visit_date(Integer last_visit_date) {
-        this.last_visit_date = last_visit_date;
+    public void setLast_visit_date(long last_visit_date) {
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        this.last_visit_date = timestamp.getTime();
+        this.last_visit_date_simple = timestamp.toLocalDateTime().toLocalDate();
+    }
+
+    public LocalDate getLast_visit_date_simple() {
+        return last_visit_date_simple;
     }
 
     public Integer getHidden() {
@@ -168,6 +179,7 @@ public class Site implements Serializable {
                ", guid='" + guid + '\'' +
                ", preview_image_url='" + preview_image_url + '\'' +
                ", last_visit_date=" + last_visit_date +
+               ", last_visit_date_simple=" + last_visit_date_simple +
                ", url_hash=" + url_hash +
                ", origin_id=" + origin_id +
                ", foreign_count=" + foreign_count +

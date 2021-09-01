@@ -5,8 +5,9 @@ import com.casanova.firy.domain.Host;
 import com.casanova.firy.domain.Site;
 import com.casanova.firy.domain.Visit;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.sql.SparkSession;
 import org.apache.spark.streaming.Duration;
 import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaInputDStream;
@@ -35,59 +36,56 @@ import static com.datastax.spark.connector.japi.CassandraJavaUtil.mapToRow;
 public class FiryKafkaService {
 
     private final Logger log = LoggerFactory.getLogger(FiryKafkaService.class);
+
     private final KafkaProperties kafkaProperties;
 
-    public FiryKafkaService(KafkaProperties kafkaProperties) {
+    private final JavaStreamingContext streamingContext;
+
+    private final SparkSession sparkSession;
+
+    public FiryKafkaService(final KafkaProperties kafkaProperties, final SparkSession sparkSession) {
         this.kafkaProperties = kafkaProperties;
-    }
+        this.sparkSession = sparkSession;
 
-    public void consume(final List<String> topics, final Map<String, String> consumerParams) throws InterruptedException {
-        processSpark(topics, consumerParams);
-    }
-
-    private void processSpark(final List<String> topics, final Map<String, String> consumerParams) throws InterruptedException {
-        SparkConf sparkConf = new SparkConf();
-        sparkConf.setAppName("FiryApp");
-        sparkConf.setMaster("local[2]");
-        sparkConf.set("spark.cassandra.connection.host", "127.0.0.1");
-        sparkConf.set("spark.cassandra.output.consistency.level", "LOCAL_ONE");
-
-        Map<String, Object> consumerProps = kafkaProperties.getConsumerProps();
-        consumerProps.putAll(consumerParams);
+        Map<String, Object> consumerProps = this.kafkaProperties.getConsumerProps();
         consumerProps.remove("topic");
 
-        JavaStreamingContext streamingContext = new JavaStreamingContext(sparkConf, new Duration(20000));
+        this.streamingContext = new JavaStreamingContext(JavaSparkContext.fromSparkContext(this.sparkSession.sparkContext()), new Duration(20000));
+    }
 
+    public void consume(final List<String> topics) throws InterruptedException {
+        processSpark(topics);
+    }
+
+    private void processSpark(final List<String> topics) throws InterruptedException {
         JavaInputDStream<ConsumerRecord<String, String>> messages =
             KafkaUtils.createDirectStream(
-                streamingContext,
+                this.streamingContext,
                 LocationStrategies.PreferConsistent(),
-                ConsumerStrategies.Subscribe(topics, consumerProps));
+                ConsumerStrategies.Subscribe(topics, null));
 
-        topics.forEach(topic -> saveInformationTemporarily(messages, streamingContext, topic));
+        topics.forEach(topic -> saveInformationTemporarily(messages, topic));
 
-        streamingContext.start();
-        streamingContext.awaitTermination();
+        this.streamingContext.start();
+        this.streamingContext.awaitTermination();
     }
 
     private void saveInformationTemporarily(final JavaInputDStream<ConsumerRecord<String, String>> messages,
-                                            final JavaStreamingContext streamingContext,
                                             final String topic) {
         switch (topic) {
             case "firefox-moz_places":
-                saveTemporarily(messages.filter(m -> m.topic().equals(topic)), streamingContext, Site.class, "site");
+                saveTemporarily(messages.filter(m -> m.topic().equals(topic)), Site.class, "site");
                 break;
             case "firefox-moz_historyvisits":
-                saveTemporarily(messages.filter(m -> m.topic().equals(topic)), streamingContext, Visit.class, "visit");
+                saveTemporarily(messages.filter(m -> m.topic().equals(topic)), Visit.class, "visit");
                 break;
             case "firefox-moz_origins":
-                saveTemporarily(messages.filter(m -> m.topic().equals(topic)), streamingContext, Host.class, "host");
+                saveTemporarily(messages.filter(m -> m.topic().equals(topic)), Host.class, "host");
                 break;
         }
     }
 
     private void saveTemporarily(final JavaDStream<ConsumerRecord<String, String>> messages,
-                                 final JavaStreamingContext streamingContext,
                                  final Class mapperClass,
                                  final String nameTable) {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -100,9 +98,10 @@ public class FiryKafkaService {
                         list.add(temp);
                     }
                     if (!list.isEmpty()) {
-                        JavaRDD<Object> rdd = streamingContext.sparkContext().parallelize(list);
+                        JavaRDD<Object> rdd = this.streamingContext.sparkContext().parallelize(list);
                         javaFunctions(rdd).writerBuilder("cassandrafiry", nameTable, mapToRow(mapperClass)).saveToCassandra();
                     }
                 });
     }
+
 }

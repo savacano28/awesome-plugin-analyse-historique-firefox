@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/firy-dashboard")
-public class FiryDashboardResource {
+public class DashboardResource {
 
-    private final Logger log = LoggerFactory.getLogger(FiryDashboardResource.class);
+    private final Logger log = LoggerFactory.getLogger(DashboardResource.class);
     private final DashboardService dashboardService;
 
-    public FiryDashboardResource(final DashboardService dashboardService) {
+    public DashboardResource(final DashboardService dashboardService) {
         this.dashboardService = dashboardService;
     }
 

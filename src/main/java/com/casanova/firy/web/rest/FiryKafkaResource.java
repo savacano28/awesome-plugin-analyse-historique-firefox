@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/firy-kafka")
@@ -25,10 +24,10 @@ public class FiryKafkaResource {
     }
 
     @GetMapping("/consume")
-    public ResponseEntity<Void> consume(@RequestParam("topic") List<String> topics, @RequestParam Map<String, String> consumerParams) throws
-                                                                                                                                      InterruptedException {
+    public ResponseEntity<Void> consume(@RequestParam("topic") List<String> topics) throws
+                                                                                    InterruptedException {
         log.debug("REST request to consume records from Kafka topics {}", topics);
-        firyKafkaService.consume(topics, consumerParams);
+        firyKafkaService.consume(topics);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
