@@ -1,19 +1,20 @@
 {
   "home": {
-    "title": "Welcome, Java Hipster!",
-    "subtitle": "This is your homepage",
+    "title": "FIRY",
+    "subtitle": "ANALYSE DES HISTORIQUES DE RECHERCHE SUR FIREFOX",
     "logged": {
-      "message": "You are logged in as user \"{{username}}\"."
+      "message": "Vous êtes connecté en tant qu'utilisateur  \"{{username}}\"."
     },
-    "question": "If you have any question on JHipster:",
+    "question": "Si vous avez des questions sur Firy écrivez-nous à : ",
     "link": {
       "homepage": "JHipster homepage",
       "stackoverflow": "JHipster on Stack Overflow",
       "bugtracker": "JHipster bug tracker",
       "chat": "JHipster public chat room",
-      "follow": "follow @jhipster on Twitter"
+      "follow": "follow @jhipster on Twitter",
+      "email": "savacano_28@live.com"
     },
-    "like": "If you like JHipster, don't forget to give us a star on",
+    "like": "Si vous aimez Firy, n'oubliez pas de nous donner une étoile sur ",
     "github": "GitHub"
   }
 }

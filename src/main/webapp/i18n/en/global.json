@@ -3,20 +3,20 @@
     "title": "Firy",
     "browsehappy": "You are using an <strong>outdated</strong> browser. Please <a href=\"http://browsehappy.com/?locale=en\">upgrade your browser</a> to improve your experience.",
     "menu": {
-      "home": "Home",
+      "home": "Accueil",
       "jhipster-needle-menu-add-element": "JHipster will add additional menu entries here (do not translate!)",
       "entities": {
         "main": "Entities",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
       },
       "account": {
-        "main": "Account",
+        "main": "Mon espace",
         "settings": "Settings",
         "password": "Password",
         "sessions": "Sessions",
-        "login": "Sign in",
-        "logout": "Sign out",
-        "register": "Register"
+        "login": "s'identifier",
+        "logout": "Se déconnecter",
+        "register": "S'inscrire"
       },
       "admin": {
         "main": "Administration",
@@ -52,8 +52,8 @@
           "suffix": ", you can try the default accounts:<br/>- Administrator (login=\"admin\" and password=\"admin\") <br/>- User (login=\"user\" and password=\"user\")."
         },
         "register": {
-          "noaccount": "You don't have an account yet?",
-          "link": "Register a new account"
+          "noaccount": "Vous n'avez pas encore de compte ?",
+          "link": "Enregistrer un nouveau compte"
         }
       },
       "error": {

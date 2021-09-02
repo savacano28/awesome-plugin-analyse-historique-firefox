@@ -22,29 +22,11 @@
         <a (click)="collapseNavbar()" class="nav-link" routerLink="/">
           <span>
             <fa-icon icon="home"></fa-icon>
-            <span jhiTranslate="global.menu.home">Home</span>
+            <span jhiTranslate="global.menu.home">Accueil</span>
           </span>
         </a>
       </li>
       <!-- jhipster-needle-add-element-to-menu - JHipster will add new menu items here -->
-      <li
-        *ngSwitchCase="true"
-        [routerLinkActiveOptions]="{ exact: true }"
-        class="nav-item dropdown pointer"
-        display="dynamic"
-        ngbDropdown
-        routerLinkActive="active"
-      >
-        <a class="nav-link dropdown-toggle" data-cy="entity" href="javascript:void(0);" id="entity-menu" ngbDropdownToggle>
-          <span>
-            <fa-icon icon="th-list"></fa-icon>
-            <span jhiTranslate="global.menu.entities.main">Entities</span>
-          </span>
-        </a>
-        <ul aria-labelledby="entity-menu" class="dropdown-menu" ngbDropdownMenu>
-          <!-- jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here -->
-        </ul>
-      </li>
       <li
         *jhiHasAnyAuthority="'ROLE_ADMIN'"
         [routerLinkActiveOptions]="{ exact: true }"
@@ -104,7 +86,7 @@
         <a class="nav-link dropdown-toggle" data-cy="accountMenu" href="javascript:void(0);" id="account-menu" ngbDropdownToggle>
           <span *ngIf="!account?.imageUrl">
             <fa-icon icon="user"></fa-icon>
-            <span jhiTranslate="global.menu.account.main">Account</span>
+            <span jhiTranslate="global.menu.account.main">Mon espace</span>
           </span>
           <span *ngIf="account?.imageUrl">
             <img [src]="account!.imageUrl" alt="Avatar" class="profile-image rounded-circle"/>
