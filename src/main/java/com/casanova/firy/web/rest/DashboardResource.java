@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/firy-dashboard")
+@RequestMapping("/api/firy-dashboard")
 public class DashboardResource {
 
     private final Logger log = LoggerFactory.getLogger(DashboardResource.class);

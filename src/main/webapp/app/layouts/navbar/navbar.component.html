@@ -1,4 +1,4 @@
-<nav class="navbar navbar-dark navbar-expand-md bg-dark" data-cy="navbar">
+<nav class="navbar navbar-dark navbar-expand-md" data-cy="navbar">
   <a (click)="collapseNavbar()" class="navbar-brand logo" routerLink="/">
     <span class="logo-img"></span>
     <span class="navbar-title" jhiTranslate="global.title">Firy</span>
@@ -23,6 +23,22 @@
           <span>
             <fa-icon icon="home"></fa-icon>
             <span jhiTranslate="global.menu.home">Accueil</span>
+          </span>
+        </a>
+      </li>
+      <li [routerLinkActiveOptions]="{ exact: true }" class="nav-item" routerLinkActive="active">
+        <a (click)="collapseNavbar()" class="nav-link" routerLink="dashboard">
+          <span>
+            <fa-icon icon="chart-line"></fa-icon>
+            <span jhiTranslate="global.menu.dashboard">Dashboard</span>
+          </span>
+        </a>
+      </li>
+      <li [routerLinkActiveOptions]="{ exact: true }" class="nav-item" routerLinkActive="active">
+        <a (click)="collapseNavbar()" class="nav-link" routerLink="datawarehouse">
+          <span>
+            <fa-icon icon="chart-line"></fa-icon>
+            <span jhiTranslate="global.menu.datawarehouse">Datawarehouse</span>
           </span>
         </a>
       </li>

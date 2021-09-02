@@ -3,7 +3,10 @@ package com.casanova.firy.service;
 import com.casanova.firy.domain.*;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
-import org.apache.spark.sql.*;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.Encoders;
+import org.apache.spark.sql.Row;
+import org.apache.spark.sql.SparkSession;
 import org.apache.spark.sql.expressions.Window;
 import org.apache.spark.sql.expressions.WindowSpec;
 import org.apache.spark.streaming.Duration;
@@ -12,8 +15,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.time.temporal.WeekFields;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import static com.datastax.spark.connector.japi.CassandraJavaUtil.javaFunctions;
 import static com.datastax.spark.connector.japi.CassandraJavaUtil.mapToRow;
@@ -83,7 +89,7 @@ public class DataWareHouseService {
                                                         max_dur.col("dur_max_vis"));
 
             Dataset<Row> f_visits_with_id = f_visits_1.withColumnRenamed("visit_type", "type_id")
-                                                      .withColumn("id", functions.monotonically_increasing_id().cast("int"));
+                                                      .withColumn("id", row_number().over(Window.orderBy("visit_date_simple")).cast("int"));
 
             Dataset<Row> f_visits_with_date_id = f_visits_with_id.withColumn("date_id", f_visits_with_id.col("id"));
 
@@ -94,7 +100,7 @@ public class DataWareHouseService {
             javaFunctions(rdd).writerBuilder("cassandrafiry", "f_visit", mapToRow(FactVisit.class)).saveToCassandra();
 
             //dim date
-            processDataToDimDate(f_visits_with_date_id.select("id", "visit_date_simple"));
+            processDataToDimDate(f_visits_with_date_id.select("visit_date_simple"));
         }
     }
 
@@ -116,10 +122,25 @@ public class DataWareHouseService {
                                               .format("org.apache.spark.sql.cassandra")
                                               .option("keyspace", "cassandrafiry")
                                               .option("table", "site")
-                                              .load();
+                                              .load()
+                                              .drop("rev_host", "last_visit_date");
         if (!sites.isEmpty()) {
+            List<DimSite> list = new ArrayList<>();
+            for (Row site : sites.collectAsList()) {
+                Integer id = (Integer) site.get(0);
+                String url = (String) site.get(8);
+                String title = (String) site.get(6);
+                Integer visit_count = (Integer) site.get(9);
+                Integer hidden = (Integer) site.get(3);
+                Integer typed = (Integer) site.get(7);
+                Integer frecency = (Integer) site.get(2);
+                String description = (String) site.get(1);
+                Date last_visit_date_simple = (Date) site.get(4);
+                Integer origin_id = (Integer) site.get(5);
+                list.add(new DimSite(id, url, title, visit_count, hidden, typed, frecency, description, last_visit_date_simple, origin_id));
+            }
             JavaRDD<DimSite> rdd = this.streamingContext.sparkContext()
-                                                        .parallelize(sites.as(Encoders.bean(DimSite.class)).collectAsList());
+                                                        .parallelize(list);
             javaFunctions(rdd).writerBuilder("cassandrafiry", "d_site", mapToRow(DimSite.class)).saveToCassandra();
         }
     }
@@ -127,13 +148,17 @@ public class DataWareHouseService {
     public void processDataToDimDate(Dataset<Row> dates) {
         if (!dates.isEmpty()) {
             List<DimDate> list = new ArrayList<>();
-            for (Row date : dates.collectAsList()) {
-                date.get(1).toString();
-                Integer day = 1;
-                Integer week = 1;
-                Integer month = 1;
-                Integer year = 2021;
-                list.add(new DimDate(1, day, week, month, year));
+            for (Row date : dates.dropDuplicates("visit_date_simple")
+                                 .withColumn("id", row_number().over(Window.orderBy("visit_date_simple")))
+                                 .collectAsList()) {
+                Integer day = date.getDate(0).toLocalDate().getDayOfMonth();
+
+                WeekFields weekFields = WeekFields.of(Locale.getDefault());
+                Integer week = date.getDate(0).toLocalDate().get(weekFields.weekOfWeekBasedYear());
+
+                Integer month = date.getDate(0).toLocalDate().getMonth().getValue();
+                Integer year = date.getDate(0).toLocalDate().getYear();
+                list.add(new DimDate((Integer) date.get(1), day, week, month, year));
             }
             JavaRDD<DimDate> rdd = this.streamingContext.sparkContext()
                                                         .parallelize(list);

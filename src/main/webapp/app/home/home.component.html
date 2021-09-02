@@ -1,44 +1,46 @@
 <div class="row">
-  <div class="col-md-3">
-  </div>
-
-  <div class="col-md-6">
-    <h1 class="display-4"><span jhiTranslate="home.title">FIRY</span></h1>
-
-    <p class="lead" jhiTranslate="home.subtitle">ANALYSE DES HISTORIQUES DE RECHERCHE SUR FIREFOX</p>
-
-    <div [ngSwitch]="account !== null">
-      <div *ngSwitchCase="true" class="alert alert-success">
-        <span *ngIf="account" [translateValues]="{ username: account.login }" id="home-logged-message" jhiTranslate="home.logged.message"
-        >You are logged in as user "{{ account.login }}".</span
-        >
+  <div class="col-md-12">
+    <h1 class="h1 home title"><span jhiTranslate="home.title">FIRY</span></h1>
+    <h1 class="h1 home subtitle">
+      <span jhiTranslate="home.subtitle">ANALYSE DES HISTORIQUES DE RECHERCHE SUR FIREFOX</span>
+    </h1>
+    <div class="row">
+      <div class="col-md-1">
       </div>
-
-      <div *ngSwitchCase="false" class="alert alert-warning">
-        <span jhiTranslate="global.messages.info.register.noaccount">Vous n'avez pas encore de compte ? </span>&nbsp;
-        <a class="alert-link" jhiTranslate="global.messages.info.register.link" routerLink="account/register">Enregistrer un nouveau compte</a>
+      <div class="col-md-3">
+        <div class="card text-center border-light text-white bg-info mb-5" style="width: 25rem; height: 28rem">
+          <div class="card-body">
+            <h5 class="card-title">Quoi ?</h5>
+            <p class="card-text">Outil d'analyse des historiques sur firefox.</p>
+            <a class="btn btn-primary" href="#">Plus d'info</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card text-center border-light bg-light mb-5" style="width: 35rem; height: 25rem">
+          <div class="card-body">
+            <h5 class="card-title">Comment ?</h5>
+            <br>
+            <p><img alt="Card image cap" class="card-img-top" height="180" src="../../content/images/archi.png" width="100">
+            </p>
+            <br>
+            <a class="btn btn-primary" href="#">Voir l'architecture</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card text-center border-light text-white bg-dark mb-5" style="width: 25rem; height: 25rem">
+          <div class="card-body">
+            <h5 class="card-title">Pourquoi ?</h5>
+            <p class="card-text">Outil d'analyse des historiques sur firefox.</p>
+            <a class="btn btn-primary" href="#">Plus d'info</a>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-1">
+        <!-- <span class="alert alert-success" *ngIf="account" [translateValues]="{ username: account.login }" id="home-logged-message" jhiTranslate="home.logged.message">
+       Vous êtes connecté en tant qu'utilisateur  "{{ account.login }}".</span>-->
       </div>
     </div>
-
-    <p jhiTranslate="home.question">Si vous avez des questions sur Firy écrivez-nous à </p>
-
-    <ul>
-      <li>
-        <a href="mailto:savacano_28@live.com" jhiTranslate="home.link.email" rel="noopener noreferrer" target="_blank"
-        >savacano_28@live.com</a
-        >
-      </li>
-    </ul>
-
-    <p>
-      <span jhiTranslate="home.like">If you like JHipster, don't forget to give us a star on</span>
-      <a href="https://github.com/savacano28/awesome-plugin-analyse-historique-firefox" jhiTranslate="home.github" rel="noopener noreferrer"
-         target="_blank"
-      >GitHub</a
-      >!
-    </p>
-  </div>
-
-  <div class="col-md-3">
   </div>
 </div>

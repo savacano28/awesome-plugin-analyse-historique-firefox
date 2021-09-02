@@ -39,6 +39,8 @@ public class FiryKafkaService {
 
     private final KafkaProperties kafkaProperties;
 
+    private final Map<String, Object> consumerProps;
+
     private final JavaStreamingContext streamingContext;
 
     private final SparkSession sparkSession;
@@ -47,7 +49,7 @@ public class FiryKafkaService {
         this.kafkaProperties = kafkaProperties;
         this.sparkSession = sparkSession;
 
-        Map<String, Object> consumerProps = this.kafkaProperties.getConsumerProps();
+        consumerProps = this.kafkaProperties.getConsumerProps();
         consumerProps.remove("topic");
 
         this.streamingContext = new JavaStreamingContext(JavaSparkContext.fromSparkContext(this.sparkSession.sparkContext()), new Duration(20000));
@@ -62,7 +64,7 @@ public class FiryKafkaService {
             KafkaUtils.createDirectStream(
                 this.streamingContext,
                 LocationStrategies.PreferConsistent(),
-                ConsumerStrategies.Subscribe(topics, null));
+                ConsumerStrategies.Subscribe(topics, consumerProps));
 
         topics.forEach(topic -> saveInformationTemporarily(messages, topic));
 

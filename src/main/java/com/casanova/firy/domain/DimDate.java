@@ -14,7 +14,7 @@ public class DimDate implements Serializable {
 
     private Integer year;
 
-    public DimDate(Integer id, Integer day, Integer month, Integer week, Integer year) {
+    public DimDate(final Integer id, final Integer day, final Integer week, final Integer month, final Integer year) {
         this.id = id;
         this.day = day;
         this.month = month;

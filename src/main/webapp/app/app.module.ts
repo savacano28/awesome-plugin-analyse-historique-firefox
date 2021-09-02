@@ -16,7 +16,10 @@ import './config/dayjs';
 import {SharedModule} from 'app/shared/shared.module';
 import {AppRoutingModule} from './app-routing.module';
 import {HomeModule} from './home/home.module';
+import {DashboardModule} from './dashboard/dashboard.module';
+import {DatawarehouseModule} from './datawarehouse/datawarehouse.module';
 import {EntityRoutingModule} from './entities/entity-routing.module';
+import {ChartsModule} from 'ng2-charts';
 // jhipster-needle-angular-add-module-import JHipster will add new module here
 import {NgbDateDayjsAdapter} from './config/datepicker-adapter';
 import {fontAwesomeIcons} from './config/font-awesome-icons';
@@ -33,7 +36,10 @@ import {ErrorComponent} from './layouts/error/error.component';
   imports: [
     BrowserModule,
     SharedModule,
+    ChartsModule,
     HomeModule,
+    DashboardModule,
+    DatawarehouseModule,
     // jhipster-needle-angular-add-module JHipster will add new module here
     EntityRoutingModule,
     AppRoutingModule,
