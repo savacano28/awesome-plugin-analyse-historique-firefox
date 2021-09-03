@@ -4,6 +4,7 @@ import scala.Serializable;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.util.Random;
 
 public class Visit implements Serializable {
 
@@ -53,6 +54,15 @@ public class Visit implements Serializable {
 
     public void setVisit_date(Long visit_date) {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        Random r = new Random();
+
+        if (this.id < 2050) {
+            timestamp.setTime(timestamp.getTime() - 259200000 + (r.nextInt(5000) + 5000));
+        } else if (this.id < 5014 && this.id > 2050) {
+            timestamp.setTime(timestamp.getTime() - 172800000 + (r.nextInt(5000) + 5000));
+        } else if (this.id < 7865 && this.id > 5014) {
+            timestamp.setTime(timestamp.getTime() - 86400000 + (r.nextInt(5000) + 5000));
+        }
         this.visit_date = timestamp.getTime();
         this.visit_date_simple = timestamp.toLocalDateTime().toLocalDate();
     }

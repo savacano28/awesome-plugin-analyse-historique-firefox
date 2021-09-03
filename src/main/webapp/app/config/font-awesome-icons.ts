@@ -38,6 +38,8 @@ import {
   faUsersCog,
   faWrench,
 } from '@fortawesome/free-solid-svg-icons';
+import {faCaravan} from "@fortawesome/free-solid-svg-icons/faCaravan";
+import {faChartLine} from "@fortawesome/free-solid-svg-icons/faChartLine";
 
 export const fontAwesomeIcons = [
   faArrowLeft,
@@ -47,7 +49,9 @@ export const fontAwesomeIcons = [
   faBell,
   faBook,
   faCalendarAlt,
+  faCaravan,
   faCheck,
+  faChartLine,
   faCloud,
   faCogs,
   faDatabase,
