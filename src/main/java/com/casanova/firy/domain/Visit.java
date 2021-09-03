@@ -57,11 +57,11 @@ public class Visit implements Serializable {
         Random r = new Random();
 
         if (this.id < 2050) {
-            timestamp.setTime(timestamp.getTime() - 259200000 + (r.nextInt(15000) + 5000));
+            timestamp.setTime(timestamp.getTime() - 259200000 + (r.nextInt(35000) + 17000));
         } else if (this.id < 5014 && this.id > 2050) {
-            timestamp.setTime(timestamp.getTime() - 172800000 + (r.nextInt(20000) + 5000));
+            timestamp.setTime(timestamp.getTime() - 172800000 + (r.nextInt(200000) + 15000));
         } else if (this.id < 7865 && this.id > 5014) {
-            timestamp.setTime(timestamp.getTime() - 86400000 + (r.nextInt(8000) + 5000));
+            timestamp.setTime(timestamp.getTime() - 86400000 + (r.nextInt(85300) + 17000));
         }
         this.visit_date = timestamp.getTime();
         this.visit_date_simple = timestamp.toLocalDateTime().toLocalDate();

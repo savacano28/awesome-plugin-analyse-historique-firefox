@@ -18,6 +18,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   lineChartLabels: Label[] = [];
   lineChartLegend = true;
   lineChartColors: Color[] = [];
+  lineStackColors: Color[] = [];
   lineChartOptions: ChartOptions[] = [];
   lineStackData: ChartDataSets[] = [];
   lineStackLabels: Label[] = [];
@@ -121,9 +122,41 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private onSuccessStackChart(datachart: DataChart): void {
     this.lineStackData = [{
       data: datachart.datasets[0].data,
-      label: "Duration moyen de visites par site",
-      backgroundColor: 'rgba(255,0,0,0.3)',
-      borderColor: 'rgba(255,0,0,0.3)'
+      label: "Duration moyen de visites par site [s]",
+      backgroundColor: [
+        '#0D47A1',
+        '#1565C0',
+        '#1976D2',
+        '#1E88E5',
+        '#2196F3',
+        '#42A5F5',
+        '#90CAF9',
+        '#BBDEFB',
+        '#0D47A1',
+        '#1565C0',
+        '#1976D2',
+        '#1E88E5',
+        '#2196F3',
+        '#42A5F5',
+        '#90CAF9',
+        '#BBDEFB',
+        '#0D47A1',
+        '#1565C0',
+        '#1976D2',
+        '#1E88E5',
+        '#2196F3',
+        '#42A5F5',
+        '#90CAF9',
+        '#BBDEFB',
+        '#0D47A1',
+        '#1565C0',
+        '#1976D2',
+        '#1E88E5',
+        '#2196F3',
+        '#42A5F5',
+        '#90CAF9',
+        '#BBDEFB'
+      ]
     }];
     this.lineStackLabels = datachart.labels;
     this.lineStackOptions.push({responsive: true});

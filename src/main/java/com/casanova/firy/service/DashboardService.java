@@ -62,7 +62,7 @@ public class DashboardService {
         Dataset<Row> durationVisitBySite = visits.select("host", "dur_mean_vis")
                                                  .groupBy("host")
                                                  .agg(avg("dur_mean_vis").alias("dur_mean_by_site"))
-                                                 .filter(col("dur_mean_by_site").equalTo(0))
+                                                 .filter(col("dur_mean_by_site").$greater(1))
                                                  .limit(30)
                                                  .orderBy(desc("dur_mean_by_site"));
 
