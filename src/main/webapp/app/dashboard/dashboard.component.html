@@ -11,7 +11,6 @@
             <canvas [chartType]="'line'" [colors]="lineChartColors" [datasets]="lineChartData"
                     [labels]="lineChartLabels"
                     [legend]="lineChartLegend"
-                    [plugins]="lineChartPlugins"
                     baseChart
                     height="400"
                     width="400">
@@ -20,10 +19,9 @@
         </div>
         <div class="col-md-3">
           <div style="display: block;">
-            <canvas [chartType]="'line'" [colors]="lineChartColors" [datasets]="lineChartData"
-                    [labels]="lineChartLabels"
-                    [legend]="lineChartLegend"
-                    [plugins]="lineChartPlugins"
+            <canvas [chartType]="'bar'" [colors]="lineChartColors" [datasets]="lineStackData"
+                    [labels]="lineStackLabels"
+                    [legend]="lineStackLegend"
                     baseChart
                     height="400"
                     width="400">
@@ -32,22 +30,21 @@
         </div>
         <div class="col-md-3">
           <div style="display: block;">
-            <canvas [chartType]="'line'" [colors]="lineChartColors" [datasets]="lineChartData"
-                    [labels]="lineChartLabels"
-                    [legend]="lineChartLegend"
-                    [plugins]="lineChartPlugins"
-                    baseChart
+            <canvas [chartType]="'doughnut'"
                     height="400"
+                    [datasets]="pieData"
+                    [labels]="pieLabels"
+                    baseChart
                     width="400">
             </canvas>
           </div>
         </div>
         <div class="col-md-3">
           <div style="display: block;">
-            <canvas [chartType]="'line'" [colors]="lineChartColors" [datasets]="lineChartData"
+            <canvas [chartType]="'bubble'"
+                    [datasets]="lineChartData"
                     [labels]="lineChartLabels"
                     [legend]="lineChartLegend"
-                    [plugins]="lineChartPlugins"
                     baseChart
                     height="400"
                     width="400">

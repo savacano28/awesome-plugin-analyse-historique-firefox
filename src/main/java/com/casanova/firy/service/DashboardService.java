@@ -1,6 +1,7 @@
 package com.casanova.firy.service;
 
 import com.casanova.firy.domain.DataChart;
+import com.casanova.firy.domain.DataSet;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
@@ -8,9 +9,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
-import static org.apache.spark.sql.functions.sum;
+import static org.apache.spark.sql.functions.*;
 
 /**
  * Service class for managing dashboard.
@@ -35,33 +39,100 @@ public class DashboardService {
 
         Dataset<Row> visitsByDay = visits.select("visit_date_simple", "nb_visits")
                                          .groupBy("visit_date_simple")
-                                         .agg(sum("nb_visits").alias("nb_visits_by_day"));
+                                         .agg(sum("nb_visits").alias("nb_visits_by_day"))
+                                         .orderBy("visit_date_simple");
 
         DataChart data = new DataChart();
-        data.setLabels(visitsByDay.select("visit_date_simple")
-                                  .collectAsList()
-                                  .stream()
-                                  .map(d -> d.getDate(0).toString())
-                                  .collect(Collectors.toList()));
-        // data.setDatasets();
+        //Labels
+        data.setLabels(transformDataString(visitsByDay, "visit_date_simple"));
+        //Dataset
+        DataSet ds = new DataSet();
+        ds.setData(transformDataDouble(visitsByDay, "nb_visits_by_day"));
+        data.setDatasets(Collections.singletonList(ds));
         return data;
     }
 
     public DataChart getDataSitesWithDuration() {
-        DataChart data = new DataChart();
+        Dataset<Row> visits = this.sparkSession.read()
+                                               .format("org.apache.spark.sql.cassandra")
+                                               .option("keyspace", "cassandrafiry")
+                                               .option("table", "f_visit")
+                                               .load();
 
+        Dataset<Row> durationVisitBySite = visits.select("host", "dur_mean_vis")
+                                                 .groupBy("host")
+                                                 .agg(avg("dur_mean_vis").alias("dur_mean_by_site"))
+                                                 .filter(col("dur_mean_by_site").equalTo(0))
+                                                 .limit(30)
+                                                 .orderBy(desc("dur_mean_by_site"));
+
+        DataChart data = new DataChart();
+        //Labels
+        data.setLabels(transformDataString(durationVisitBySite, "host"));
+        //Dataset
+        DataSet ds = new DataSet();
+        ds.setData(transformDataDouble(durationVisitBySite, "dur_mean_by_site"));
+
+        data.setDatasets(Arrays.asList(ds));
         return data;
     }
 
     public DataChart getDataVisitsByType() {
-        DataChart data = new DataChart();
+        Dataset<Row> visits = this.sparkSession.read()
+                                               .format("org.apache.spark.sql.cassandra")
+                                               .option("keyspace", "cassandrafiry")
+                                               .option("table", "f_visit")
+                                               .load();
 
+        Dataset<Row> durationVisitByType = visits.select("type_id", "nb_visits")
+                                                 .groupBy("type_id")
+                                                 .agg(sum("nb_visits").alias("nb_visits_by_type"))
+                                                 .orderBy("type_id");
+        DataChart data = new DataChart();
+        //Labels
+        data.setLabels(transformDataString(durationVisitByType, "type_id"));
+        //Dataset
+        DataSet ds = new DataSet();
+        ds.setData(transformDataDouble(durationVisitByType, "nb_visits_by_type"));
+        data.setDatasets(Collections.singletonList(ds));
         return data;
     }
 
     public DataChart getDataSearchSubject() {
-        DataChart data = new DataChart();
+        Dataset<Row> sites = this.sparkSession.read()
+                                              .format("org.apache.spark.sql.cassandra")
+                                              .option("keyspace", "cassandrafiry")
+                                              .option("table", "d_site")
+                                              .load();
+        Dataset<Row> words = sites.select("title");
 
+        DataChart data = new DataChart();
+        //Labels
+        //data.setLabels(transformDataString(words, "title"));
+        //Dataset
+        DataSet ds = new DataSet();
+        // ds.setData(transformDataDouble(words, "frec"));
+        data.setDatasets(Collections.singletonList(ds));
         return data;
+    }
+
+    private List<Double> transformDataDouble(final Dataset<Row> dataToTransform, final String column) {
+        List<Double> list = new ArrayList<>();
+        for (Row d : dataToTransform.select(column)
+                                    .collectAsList()) {
+            Double value = Double.valueOf(d.get(0).toString());
+            list.add(value);
+        }
+        return list;
+    }
+
+    private List<String> transformDataString(final Dataset<Row> dataToTransform, final String column) {
+        List<String> list = new ArrayList<>();
+        for (Row d : dataToTransform.select(column)
+                                    .collectAsList()) {
+            String value = d.get(0).toString();
+            list.add(value);
+        }
+        return list;
     }
 }

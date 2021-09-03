@@ -24,6 +24,8 @@ public class FactVisit implements Serializable {
 
     private Date visit_date_simple;
 
+    private String host;
+
     public FactVisit(Integer id,
                      Integer place_id,
                      Integer date_id,
@@ -32,7 +34,8 @@ public class FactVisit implements Serializable {
                      Integer dur_max_vis,
                      Double dur_mean_vis,
                      Integer dur_min_vis,
-                     Date visit_date_simple) {
+                     Date visit_date_simple,
+                     String host) {
         this.id = id;
         this.place_id = place_id;
         this.date_id = date_id;
@@ -42,6 +45,7 @@ public class FactVisit implements Serializable {
         this.dur_mean_vis = dur_mean_vis;
         this.dur_min_vis = dur_min_vis;
         this.visit_date_simple = visit_date_simple;
+        this.host = host;
     }
 
     public Integer getId() {
@@ -116,6 +120,14 @@ public class FactVisit implements Serializable {
         this.visit_date_simple = visit_date_simple;
     }
 
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
     @Override public String toString() {
         return "FactVisit{" +
                "id=" + id +
@@ -127,6 +139,7 @@ public class FactVisit implements Serializable {
                ", dur_mean_vis=" + dur_mean_vis +
                ", dur_min_vis=" + dur_min_vis +
                ", visit date=" + visit_date_simple +
+               ", host=" + host +
                '}';
     }
 }

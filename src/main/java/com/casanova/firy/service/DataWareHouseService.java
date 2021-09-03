@@ -16,7 +16,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.temporal.WeekFields;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 import static com.datastax.spark.connector.japi.CassandraJavaUtil.javaFunctions;
 import static com.datastax.spark.connector.japi.CassandraJavaUtil.mapToRow;
@@ -45,6 +48,19 @@ public class DataWareHouseService {
                                                .option("keyspace", "cassandrafiry")
                                                .option("table", "visit")
                                                .load();
+
+        Dataset<Row> sites = this.sparkSession.read()
+                                              .format("org.apache.spark.sql.cassandra")
+                                              .option("keyspace", "cassandrafiry")
+                                              .option("table", "site")
+                                              .load()
+                                              .drop("rev_host", "last_visit_date");
+
+        Dataset<Row> hosts = this.sparkSession.read()
+                                              .format("org.apache.spark.sql.cassandra")
+                                              .option("keyspace", "cassandrafiry")
+                                              .option("table", "host")
+                                              .load();
         if (!visits.isEmpty()) {
             //Visits
             Dataset<Row> visits_plus_duration = calculateDurationVisite(visits);
@@ -96,7 +112,12 @@ public class DataWareHouseService {
 
             Dataset<Row>
                 f_visits_final =
-                f_visits_with_id.join(dates, dates.col("visit_date_simple").equalTo(f_visits_with_id.col("visit_date_simple")))
+                f_visits_with_id.join(dates, dates.col("visit_date_simple")
+                                                  .equalTo(f_visits_with_id.col("visit_date_simple")))
+                                .join(sites, sites.col("id")
+                                                  .equalTo(f_visits_with_id.col("place_id")))
+                                .join(hosts, hosts.col("id")
+                                                  .equalTo(sites.col("origin_id")))
                                 .select(f_visits_with_id.col("id"),
                                         f_visits_with_id.col("place_id"),
                                         f_visits_with_id.col("type_id"),
@@ -105,7 +126,8 @@ public class DataWareHouseService {
                                         f_visits_with_id.col("nb_visits"),
                                         f_visits_with_id.col("dur_mean_vis"),
                                         f_visits_with_id.col("dur_min_vis"),
-                                        f_visits_with_id.col("dur_max_vis")
+                                        f_visits_with_id.col("dur_max_vis"),
+                                        hosts.col("host")
                                 );
             List<FactVisit> list = new ArrayList<>();
             for (Row visit : f_visits_final.collectAsList()) {
@@ -115,11 +137,12 @@ public class DataWareHouseService {
                 Integer date_id = (Integer) visit.get(3);
                 Integer nb_visits_ = (Integer) visit.get(5);
                 Double dur_mean_vis = (double) visit.get(6);
-                Integer dur_min_vis = (Integer) visit.get(7);
-                Integer dur_max_vis = (Integer) visit.get(8);
+                Integer dur_min_vis = Long.valueOf(visit.get(7).toString()).intValue();
+                Integer dur_max_vis = Long.valueOf(visit.get(8).toString()).intValue();
                 Date visit_date_simple = (Date) visit.get(4);
+                String host = visit.get(9).toString();
 
-                list.add(new FactVisit(id, place_id, date_id, type_id, nb_visits_, dur_max_vis, dur_mean_vis, dur_min_vis, visit_date_simple));
+                list.add(new FactVisit(id, place_id, date_id, type_id, nb_visits_, dur_max_vis, dur_mean_vis, dur_min_vis, visit_date_simple, host));
             }
 
             JavaRDD<FactVisit> rdd = this.streamingContext.sparkContext()
@@ -197,14 +220,10 @@ public class DataWareHouseService {
 
     private Dataset<Row> calculateDurationVisite(final Dataset<Row> visits) {
         WindowSpec windowSpec = Window.orderBy("visit_date");
-        Random r = new Random();
-        r.nextInt();
-        Dataset<Row> withDuration = visits.withColumn("duration",
-                                                      visits.col("visit_date")
-                                                            .minus(when((lag("visit_date", 1).over(windowSpec)).isNull(), 0)
-                                                                       .otherwise(lag("visit_date", 1).over(windowSpec))));
-        Dataset<Row> withDurationRandom = withDuration.withColumn("duration", when(withDuration.col("duration").$less$eq(18), r.nextInt(112)));
-        return withDurationRandom.withColumn("duration", when(col("duration").isNull(), r.nextInt(158)).otherwise(col("duration")));
+        return visits.withColumn("duration",
+                                 visits.col("visit_date")
+                                       .minus(when((lag("visit_date", 1).over(windowSpec)).isNull(), 0)
+                                                  .otherwise(lag("visit_date", 1).over(windowSpec))));
     }
 
     private Dataset<Row> calculateNbVisitsByDayAndSiteAndType(final Dataset<Row> visits) {
