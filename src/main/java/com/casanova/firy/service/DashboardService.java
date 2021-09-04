@@ -5,6 +5,7 @@ import com.casanova.firy.domain.DataSet;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.functions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -63,17 +64,32 @@ public class DashboardService {
                                                  .groupBy("host")
                                                  .agg(avg("dur_mean_vis").alias("dur_mean_by_site"))
                                                  .filter(col("dur_mean_by_site").$greater(1))
-                                                 .limit(30)
+                                                 .limit(15)
                                                  .orderBy(desc("dur_mean_by_site"));
 
+        Dataset<Row> nbVisitBySite = visits.join(durationVisitBySite, visits.col("host")
+                                                                            .equalTo(durationVisitBySite.col("host")))
+                                           .select(visits.col("host"), visits.col("nb_visits"))
+                                           .groupBy("host")
+                                           .agg(sum("nb_visits").alias("nb_visits_by_site"));
+
+        visits.filter(visits.col("host").isin(durationVisitBySite.col("host")))
+              .select(visits.col("host"), visits.col("nb_visits"))
+              .groupBy("host")
+              .agg(sum("nb_visits").alias("nb_visits_by_site"));
+
         DataChart data = new DataChart();
+        DataChart dataLine = new DataChart();
         //Labels
         data.setLabels(transformDataString(durationVisitBySite, "host"));
+        dataLine.setLabels(transformDataString(nbVisitBySite, "host"));
         //Dataset
         DataSet ds = new DataSet();
+        DataSet dsLine = new DataSet();
         ds.setData(transformDataDouble(durationVisitBySite, "dur_mean_by_site"));
+        dsLine.setData(transformDataDouble(nbVisitBySite, "nb_visits_by_site"));
 
-        data.setDatasets(Arrays.asList(ds));
+        data.setDatasets(Arrays.asList(ds, dsLine));
         return data;
     }
 
@@ -104,14 +120,29 @@ public class DashboardService {
                                               .option("keyspace", "cassandrafiry")
                                               .option("table", "d_site")
                                               .load();
-        Dataset<Row> words = sites.select("title");
+        Dataset<Row> words = sites.select(
+            trim(
+                lower(
+                    regexp_replace(
+                        lower(
+                            sites.col("title")), "([^\\s\\w_]|_)+", ""))).alias("sentence"))
+                                  .filter(col("sentence").isNotNull());
+        Dataset<Row> wordSplit = words.select(split(words.col("sentence"), "\\s+").alias("split"));
+        Dataset<Row> wordSingle = wordSplit.select(explode(wordSplit.col("split")).alias("word"));
+        Dataset<Row>
+            wordCount =
+            wordSingle.groupBy("word")
+                      .count()
+                      .filter(functions.not(col("word").isin("de", "para", "en", "el", "la", "you", "js", "parte")))
+                      .orderBy(desc("count"))
+                      .limit(50);
 
         DataChart data = new DataChart();
         //Labels
-        //data.setLabels(transformDataString(words, "title"));
+        data.setLabels(transformDataString(wordCount, "word"));
         //Dataset
         DataSet ds = new DataSet();
-        // ds.setData(transformDataDouble(words, "frec"));
+        ds.setData(transformDataDouble(wordCount, "count"));
         data.setDatasets(Collections.singletonList(ds));
         return data;
     }

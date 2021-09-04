@@ -156,8 +156,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
         '#42A5F5',
         '#90CAF9',
         '#BBDEFB'
-      ]
-    }];
+      ],
+      stack: 'combined',
+      type: 'bar'
+    },
+      {
+        data: datachart.datasets[1].data,
+        label: "Nombre de visites par site",
+        stack: 'combined',
+        type: 'line'
+      }];
     this.lineStackLabels = datachart.labels;
     this.lineStackOptions.push({responsive: true});
   }
