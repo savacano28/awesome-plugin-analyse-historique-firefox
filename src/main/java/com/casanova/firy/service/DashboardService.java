@@ -65,18 +65,14 @@ public class DashboardService {
                                                  .agg(avg("dur_mean_vis").alias("dur_mean_by_site"))
                                                  .filter(col("dur_mean_by_site").$greater(1))
                                                  .limit(15)
-                                                 .orderBy(desc("dur_mean_by_site"));
+                                                 .orderBy("host");
 
         Dataset<Row> nbVisitBySite = visits.join(durationVisitBySite, visits.col("host")
                                                                             .equalTo(durationVisitBySite.col("host")))
                                            .select(visits.col("host"), visits.col("nb_visits"))
                                            .groupBy("host")
-                                           .agg(sum("nb_visits").alias("nb_visits_by_site"));
-
-        visits.filter(visits.col("host").isin(durationVisitBySite.col("host")))
-              .select(visits.col("host"), visits.col("nb_visits"))
-              .groupBy("host")
-              .agg(sum("nb_visits").alias("nb_visits_by_site"));
+                                           .agg(sum("nb_visits").alias("nb_visits_by_site"))
+                                           .orderBy("host");
 
         DataChart data = new DataChart();
         DataChart dataLine = new DataChart();
@@ -133,7 +129,25 @@ public class DashboardService {
             wordCount =
             wordSingle.groupBy("word")
                       .count()
-                      .filter(functions.not(col("word").isin("de", "para", "en", "el", "la", "you", "js", "parte")))
+                      .filter(functions.not(col("word").isin("de",
+                                                             "para",
+                                                             "en",
+                                                             "el",
+                                                             "la",
+                                                             "you",
+                                                             "js",
+                                                             "parte",
+                                                             "las",
+                                                             "pas",
+                                                             "y",
+                                                             "the",
+                                                             "a",
+                                                             "of",
+                                                             "are",
+                                                             "just",
+                                                             "new",
+                                                             "bar",
+                                                             "")))
                       .orderBy(desc("count"))
                       .limit(50);
 
