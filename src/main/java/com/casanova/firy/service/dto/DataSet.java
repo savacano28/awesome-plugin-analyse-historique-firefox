@@ -1,4 +1,4 @@
-package com.casanova.firy.domain;
+package com.casanova.firy.service.dto;
 
 import java.util.List;
 

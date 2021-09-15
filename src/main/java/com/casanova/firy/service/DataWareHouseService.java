@@ -1,6 +1,10 @@
 package com.casanova.firy.service;
 
-import com.casanova.firy.domain.*;
+import com.casanova.firy.domain.DimDate;
+import com.casanova.firy.domain.DimHost;
+import com.casanova.firy.domain.DimSite;
+import com.casanova.firy.domain.FactVisit;
+import com.casanova.firy.service.dto.DataGrid;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.apache.spark.sql.Dataset;
@@ -16,10 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.temporal.WeekFields;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 import static com.datastax.spark.connector.japi.CassandraJavaUtil.javaFunctions;
 import static com.datastax.spark.connector.japi.CassandraJavaUtil.mapToRow;
@@ -220,8 +221,10 @@ public class DataWareHouseService {
 
     private Dataset<Row> calculateDurationVisite(final Dataset<Row> visits) {
         WindowSpec windowSpec = Window.orderBy("visit_date");
+        Random r = new Random();
         return visits.withColumn("duration",
                                  visits.col("visit_date")
+                                       .plus(r.nextInt())
                                        .minus(when((lag("visit_date", 1).over(windowSpec)).isNull(), 0)
                                                   .otherwise(lag("visit_date", 1).over(windowSpec))));
     }
@@ -251,6 +254,59 @@ public class DataWareHouseService {
      */
     public DataGrid getDataFromTable(final String nameTable) {
         DataGrid data = new DataGrid();
+
+        switch (nameTable) {
+            case "f_visit": {
+                Dataset<Row> visits = this.sparkSession.read()
+                                                       .format("org.apache.spark.sql.cassandra")
+                                                       .option("keyspace", "cassandrafiry")
+                                                       .option("table", "f_visit")
+                                                       .load();
+                data.setColumns(Arrays.asList("id", "place_id", "date_id", "type_id", "nb_visits", "dur_mean_vis", "dur_max_vis", "dur_min_vis"));
+
+            }
+            break;
+            case "d_site": {
+                Dataset<Row> sites = this.sparkSession.read()
+                                                      .format("org.apache.spark.sql.cassandra")
+                                                      .option("keyspace", "cassandrafiry")
+                                                      .option("table", "d_site")
+                                                      .load();
+                data.setColumns(Arrays.asList("id", "url", "title", "frecency", "visit_count", "description", "host_id"));
+
+            }
+            break;
+            case "d_host": {
+                Dataset<Row> hosts = this.sparkSession.read()
+                                                      .format("org.apache.spark.sql.cassandra")
+                                                      .option("keyspace", "cassandrafiry")
+                                                      .option("table", "d_host")
+                                                      .load();
+                data.setColumns(Arrays.asList("id", "prefix", "host", "frecency"));
+
+            }
+            break;
+            case "d_type": {
+                Dataset<Row> types = this.sparkSession.read()
+                                                      .format("org.apache.spark.sql.cassandra")
+                                                      .option("keyspace", "cassandrafiry")
+                                                      .option("table", "d_type")
+                                                      .load();
+                data.setColumns(Arrays.asList("id", "description", "type"));
+                // data.setData();
+
+            }
+            break;
+            case "d_date": {
+                Dataset<Row> dates = this.sparkSession.read()
+                                                      .format("org.apache.spark.sql.cassandra")
+                                                      .option("keyspace", "cassandrafiry")
+                                                      .option("table", "d_date")
+                                                      .load();
+                data.setColumns(Arrays.asList("id", "place_id", "date_id", "type_id", "nb_visits", "dur_mean_vis", "dur_max_vis", "dur_min_vis"));
+
+            }
+        }
 
         return data;
     }

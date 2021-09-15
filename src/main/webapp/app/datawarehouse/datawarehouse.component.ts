@@ -5,6 +5,7 @@ import {takeUntil} from 'rxjs/operators';
 
 import {AccountService} from 'app/core/auth/account.service';
 import {Account} from 'app/core/auth/account.model';
+import * as moment from "moment";
 
 @Component({
   selector: 'jhi-datawarehouse',
@@ -13,6 +14,7 @@ import {Account} from 'app/core/auth/account.model';
 })
 
 export class DatawarehouseComponent implements OnInit, OnDestroy {
+  dateObj = moment().lang("fr").format('MMMM Do YYYY, h:mm:ss a');
   account: Account | null = null;
 
   //table

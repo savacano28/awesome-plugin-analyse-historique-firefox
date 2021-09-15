@@ -1,10 +1,12 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Subject} from 'rxjs';
-import {ChartDataSets, ChartOptions} from 'chart.js';
+import {ChartDataSets, ChartOptions, ChartTitleOptions} from 'chart.js';
 import {Color, Label} from 'ng2-charts';
 
 import {DashboardService} from 'app/dashboard/dashboard.service';
 import {DataChart} from 'app/dashboard/datachart.model';
+
+import * as moment from 'moment';
 
 @Component({
   selector: 'jhi-dashboard',
@@ -13,6 +15,7 @@ import {DataChart} from 'app/dashboard/datachart.model';
 })
 
 export class DashboardComponent implements OnInit, OnDestroy {
+  dateObj = moment().lang("fr").format('MMMM Do YYYY, h:mm:ss a');
   isLoading = false;
   lineChartData: ChartDataSets[] = [];
   lineChartLabels: Label[] = [];
@@ -32,6 +35,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   wordLabels: Label[] = [];
   wordLegend = true;
   wordOptions: ChartOptions[] = [];
+  wordTitle: ChartTitleOptions = {text: "Mots plus frecuents dans la navigation"};
 
   private readonly destroy$ = new Subject<void>();
 
@@ -122,7 +126,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private onSuccessStackChart(datachart: DataChart): void {
     this.lineStackData = [{
       data: datachart.datasets[0].data,
-      label: "Duration moyen de visites par site [s]",
+      label: "Temps de visite moyen par site [s]",
       backgroundColor: [
         '#0D47A1',
         '#1565C0',
@@ -200,11 +204,34 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private onSuccessWordCloud(datachart: DataChart): void {
     this.wordData = [{
       data: datachart.datasets[0].data,
-      label: "Mots plus frecuents dans la navigation",
-      backgroundColor: 'rgba(255,0,0,0.3)',
-      borderColor: 'rgba(255,0,0,0.3)'
+      backgroundColor: [
+        '#E1BEE7',
+        '#4DD0E1',
+        '#BBDEFB',
+        '#FFF9C4',
+        '#F8BBD0',
+        '#9CCC65',
+        '#F48FB1',
+        '#2196F3',
+        '#42A5F5',
+        '#90CAF9',
+        '#BBDEFB'
+      ],
+      borderColor: [
+        '#E1BEE7',
+        '#4DD0E1',
+        '#BBDEFB',
+        '#FFF9C4',
+        '#F8BBD0',
+        '#9CCC65',
+        '#F48FB1',
+        '#2196F3',
+        '#42A5F5',
+        '#90CAF9',
+        '#BBDEFB'
+      ]
     }];
     this.wordLabels = datachart.labels;
-    this.wordOptions.push({responsive: true});
+    this.wordOptions.push({responsive: true, title: this.wordTitle});
   }
 }

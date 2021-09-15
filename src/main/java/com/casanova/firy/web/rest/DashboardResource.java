@@ -1,7 +1,7 @@
 package com.casanova.firy.web.rest;
 
-import com.casanova.firy.domain.DataChart;
 import com.casanova.firy.service.DashboardService;
+import com.casanova.firy.service.dto.DataChart;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

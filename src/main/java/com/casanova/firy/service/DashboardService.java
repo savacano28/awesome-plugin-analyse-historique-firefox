@@ -1,7 +1,7 @@
 package com.casanova.firy.service;
 
-import com.casanova.firy.domain.DataChart;
-import com.casanova.firy.domain.DataSet;
+import com.casanova.firy.service.dto.DataChart;
+import com.casanova.firy.service.dto.DataSet;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
@@ -63,7 +63,8 @@ public class DashboardService {
         Dataset<Row> durationVisitBySite = visits.select("host", "dur_mean_vis")
                                                  .groupBy("host")
                                                  .agg(avg("dur_mean_vis").alias("dur_mean_by_site"))
-                                                 .filter(col("dur_mean_by_site").$greater(1))
+                                                 .filter(col("dur_mean_by_site").$greater(1).$minus(143556))
+                                                 .orderBy(desc("dur_mean_by_site"))
                                                  .limit(15)
                                                  .orderBy("host");
 
@@ -130,7 +131,10 @@ public class DashboardService {
             wordSingle.groupBy("word")
                       .count()
                       .filter(functions.not(col("word").isin("de",
+                                                             "to",
                                                              "para",
+                                                             "1",
+                                                             "in",
                                                              "en",
                                                              "el",
                                                              "la",
@@ -149,7 +153,7 @@ public class DashboardService {
                                                              "bar",
                                                              "")))
                       .orderBy(desc("count"))
-                      .limit(50);
+                      .limit(10);
 
         DataChart data = new DataChart();
         //Labels

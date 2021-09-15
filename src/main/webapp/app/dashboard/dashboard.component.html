@@ -7,173 +7,76 @@
       </h1>
       <div class="row">
         <div class="col-md-3">
-          <div style="display: block;">
-            <canvas [chartType]="'line'" [colors]="lineChartColors" [datasets]="lineChartData"
-                    [labels]="lineChartLabels"
-                    [legend]="lineChartLegend"
-                    baseChart
-                    height="400"
-                    width="400">
-            </canvas>
+          <div class="card info text-center m-2">
+            <div class="card-body">
+              <h5 class="card-title">Nombre de visites par jour</h5>
+              <div style="display: block;">
+                <canvas [chartType]="'line'" [colors]="lineChartColors" [datasets]="lineChartData"
+                        [labels]="lineChartLabels"
+                        [legend]="lineChartLegend"
+                        baseChart
+                        height="400"
+                        width="400">
+                </canvas>
+              </div>
+            </div>
           </div>
         </div>
         <div class="col-md-3">
-          <div style="display: block;">
-            <canvas [chartType]="'bar'" [datasets]="lineStackData"
-                    [labels]="lineStackLabels"
-                    [legend]="lineStackLegend"
-                    baseChart
-                    height="400"
-                    width="400">
-            </canvas>
+          <div class="card info text-center m-2">
+            <div class="card-body">
+              <h5 class="card-title">Temps de visite moyen par site</h5>
+              <div style="display: block;">
+                <canvas [chartType]="'bar'" [datasets]="lineStackData"
+                        [labels]="lineStackLabels"
+                        [legend]="lineStackLegend"
+                        baseChart
+                        height="400"
+                        width="400">
+                </canvas>
+              </div>
+            </div>
           </div>
         </div>
         <div class="col-md-3">
-          <div style="display: block;">
-            <canvas [chartType]="'doughnut'"
-                    height="400"
-                    [datasets]="pieData"
-                    [labels]="pieLabels"
-                    baseChart
-                    width="400">
-            </canvas>
+          <div class="card info text-center m-2">
+            <div class="card-body">
+              <h5 class="card-title">Nombre de visites par type de visite</h5>
+              <div style="display: block;">
+                <canvas [chartType]="'doughnut'"
+                        [datasets]="pieData"
+                        [labels]="pieLabels"
+                        baseChart
+                        height="400"
+                        width="400">
+                </canvas>
+              </div>
+            </div>
           </div>
         </div>
         <div class="col-md-3">
-          <div style="display: block;">
-            <canvas id="canvas"
-                    baseChart
-                    height="400"
-                    width="400">
-            </canvas>
+          <div class="card info text-center m-2">
+            <div class="card-body">
+              <h5 class="card-title">Mots plus fréquents sur la navigation</h5>
+              <div style="display: block;">
+                <canvas [chartType]="'polarArea'"
+                        [datasets]="wordData"
+                        [labels]="wordLabels"
+                        [legend]="wordLegend"
+                        baseChart
+                        height="400"
+                        width="400">
+                </canvas>
+              </div>
+            </div>
           </div>
-          <script>
-            window.onload = () => {
-              const words = [
-                {key: 'word', value: 10},
-                {key: 'words', value: 8},
-                {key: 'sprite', value: 7},
-                {key: 'placed', value: 5},
-                {key: 'layout', value: 4},
-                {key: 'algorithm', value: 4},
-                {key: 'area', value: 4},
-                {key: 'without', value: 3},
-                {key: 'step', value: 3},
-                {key: 'bounding', value: 3},
-                {key: 'retrieve', value: 3},
-                {key: 'operation', value: 3},
-                {key: 'collision', value: 3},
-                {key: 'candidate', value: 3},
-                {key: '32', value: 2},
-                {key: 'placement', value: 2},
-                {key: 'time', value: 2},
-                {key: 'possible', value: 2},
-                {key: 'even', value: 2},
-                {key: 'simple', value: 2},
-                {key: 'positioning', value: 1},
-                {key: 'overlap', value: 1},
-                {key: 'available', value: 1},
-                {key: 'GitHub', value: 1},
-                {key: 'open', value: 1},
-                {key: 'source', value: 1},
-                {key: 'license', value: 1},
-                {key: 'output', value: 1},
-                {key: 'requires', value: 1},
-                {key: 'additional', value: 1},
-                {key: 'development', value: 1},
-                {key: 'configurable', value: 1},
-                {key: 'size', value: 1},
-                {key: 'makes', value: 1},
-                {key: 'animate', value: 1},
-                {key: 'stuttering', value: 1},
-                {key: 'recommended', value: 1},
-                {key: 'always', value: 1},
-                {key: 'use', value: 1},
-                {key: 'animations', value: 1},
-                {key: 'prevents', value: 1},
-                {key: 'browsers', value: 1},
-                {key: 'event', value: 1},
-                {key: 'loop', value: 1},
-                {key: 'blocking', value: 1},
-                {key: 'placing', value: 1},
-                {key: 'incredibly', value: 1},
-                {key: 'important', value: 1},
-                {key: 'Attempt', value: 1},
-                {key: 'place', value: 1},
-                {key: 'point', value: 1},
-                {key: 'usually', value: 1},
-                {key: 'near', value: 1},
-                {key: 'middle', value: 1},
-                {key: 'somewhere', value: 1},
-                {key: 'central', value: 1},
-                {key: 'horizontal', value: 1},
-                {key: 'line', value: 1},
-                {key: 'intersects', value: 1},
-                {key: 'one', value: 1},
-                {key: 'along', value: 1},
-                {key: 'increasing', value: 1},
-                {key: 'spiral', value: 1},
-                {key: 'Repeat', value: 1},
-                {key: 'intersections', value: 1},
-                {key: 'found', value: 1},
-                {key: 'hard', value: 1},
-                {key: 'part', value: 1},
-                {key: 'making', value: 1},
-                {key: 'efficiently', value: 1},
-                {key: 'According', value: 1},
-                {key: 'Jonathan', value: 1},
-                {key: 'Feinberg', value: 1},
-                {key: 'Wordle', value: 1},
-                {key: 'uses', value: 1},
-                {key: 'combination', value: 1},
-                {key: 'boxes', value: 1},
-                {key: 'quadtrees', value: 1},
-                {key: 'achieve', value: 1},
-                {key: 'reasonable', value: 1},
-                {key: 'speeds', value: 1},
-                {key: 'Glyphs', value: 1},
-                {key: 'JavaScript', value: 1},
-                {key: 'isnt', value: 1},
-                {key: 'way', value: 1},
-                {key: 'precise', value: 1},
-                {key: 'glyph', value: 1},
-                {key: 'shapes', value: 1},
-                {key: 'block', value: 1},
-              ];
-              const data = {
-                labels: words.map((d) => d.key),
-                datasets: [
-                  {
-                    label: '',
-                    data: words.map((d) => 10 + d.value * 10),
-                  },
-                ],
-              };
-              const ctx = document.getElementById('canvas').getContext('2d');
-              window.myBar = new Chart(ctx, {
-                type: 'wordCloud',
-                data: data,
-                options: {
-                  title: {
-                    display: false,
-                    text: 'Chart.js Word Cloud',
-                  },
-                  plugins: {
-                    legend: {
-                      display: false,
-                    },
-                  },
-                },
-              });
-            };
-          </script>
         </div>
       </div>
       <div class="row">
-        <div class="card info m-2" style="width: 30rem;">
+        <div class="card info ml-4 mt-2" style="width: 25rem;">
           <div class="card-body">
             <h5 class="card-title">Informations</h5>
-            <span class="card-text">Dernière mise à jour : </span><br>
+            <span class="card-text">Dernière mise à jour : {{ dateObj }}</span><br>
           </div>
         </div>
       </div>

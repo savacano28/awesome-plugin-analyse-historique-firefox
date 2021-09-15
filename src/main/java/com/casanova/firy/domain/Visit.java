@@ -57,11 +57,19 @@ public class Visit implements Serializable {
         Random r = new Random();
 
         if (this.id < 2050) {
-            timestamp.setTime(timestamp.getTime() - 259200000 + (r.nextInt(35000) + 17000));
+            timestamp.setTime(timestamp.getTime() - 604800000 + (r.nextInt(35000) + 17000));
         } else if (this.id < 5014 && this.id > 2050) {
-            timestamp.setTime(timestamp.getTime() - 172800000 + (r.nextInt(200000) + 15000));
+            timestamp.setTime(timestamp.getTime() - 518400000 + (r.nextInt(35000) + 15000));
         } else if (this.id < 7865 && this.id > 5014) {
-            timestamp.setTime(timestamp.getTime() - 86400000 + (r.nextInt(85300) + 17000));
+            timestamp.setTime(timestamp.getTime() - 432000000 + (r.nextInt(35000) + 17000));
+        } else if (this.id < 9654 && this.id > 7865) {
+            timestamp.setTime(timestamp.getTime() - 345600000 + (r.nextInt(35000) + 14000));
+        } else if (this.id < 12345 && this.id > 9654) {
+            timestamp.setTime(timestamp.getTime() - 259200000 + (r.nextInt(35000) + 18000));
+        } else if (this.id < 13777 && this.id > 12345) {
+            timestamp.setTime(timestamp.getTime() - 172800000 + (r.nextInt(35000) + 13000));
+        } else if (this.id < 20000 && this.id > 13777) {
+            timestamp.setTime(timestamp.getTime() - 86400000 + (r.nextInt(35000) + 11000));
         }
         this.visit_date = timestamp.getTime();
         this.visit_date_simple = timestamp.toLocalDateTime().toLocalDate();
